@@ -34,7 +34,11 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Expense Tracker"),
+        title: Image.asset(
+          'assets/logo_full.png',
+          height: 40, // Height kam rakhein taake AppBar mein fit ho jaye
+        ),
+        centerTitle: true, // Logo ko center mein lane ke liye
         backgroundColor: Colors.deepPurple[800],
         foregroundColor: Colors.white,
         bottom: TabBar(
@@ -53,10 +57,12 @@ class _HomeScreenState extends State<HomeScreen>
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.deepPurple),
-              child: Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+              decoration: BoxDecoration(color: Colors.deepPurple[800]),
+              child: Center(
+                child: Image.asset(
+                  'assets/logo_full.png',
+                  height: 80, // Apne hisaab se size adjust kar lein
+                ),
               ),
             ),
             ListTile(

@@ -1,0 +1,74 @@
+name: Flutter CI/CD (Separate Android & iOS Builds)
+
+# Yeh workflow tab chale ga jab bhi aap 'main' branch par code push karenge
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  # 1. ANDROID BUILD JOB
+
+  build_android:
+    name: Build Android APK
+    runs-on: ubuntu-latest # Android ke liye Linux server best aur fast hai
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17' # Flutter 3.x ke liye Java 17 recommended hai
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Release APK
+        run: flutter build apk --release
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+
+  # 2. IOS BUILD JOB
+
+  build_ios:
+    name: Build iOS App
+    runs-on: macos-latest # iOS build sirf Mac server par hi ho sakti hai
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build iOS App (No Codesign)
+        # Note: Agar Apple Developer Account set up nahi hai toh --no-codesign zaroori hai
+        run: flutter build ios --release --no-codesign
+
+      - name: Upload iOS App
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-app
+          path: build/ios/iphoneos/Runner.app
