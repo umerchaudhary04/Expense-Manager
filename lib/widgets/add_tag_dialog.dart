@@ -36,8 +36,6 @@ class _AddTagDialogState extends State<AddTagDialog> {
               name: _controller.text,
             );
             widget.onAdd(newTag);
-            // Update the provider and UI
-            Provider.of<ExpenseProvider>(context, listen: false).addTag(newTag);
             // Clear the input field for next input
             _controller.clear();
 

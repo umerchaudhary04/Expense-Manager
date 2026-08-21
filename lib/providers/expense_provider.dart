@@ -11,32 +11,10 @@ class ExpenseProvider with ChangeNotifier {
   List<Expense> _expenses = [];
 
   // List of categories
-  final List<ExpenseCategory> _categories = [
-    ExpenseCategory(id: '1', name: 'Food', isDefault: true),
-    ExpenseCategory(id: '2', name: 'Transport', isDefault: true),
-    ExpenseCategory(id: '3', name: 'Entertainment', isDefault: true),
-    ExpenseCategory(id: '4', name: 'Office', isDefault: true),
-    ExpenseCategory(id: '5', name: 'Gym', isDefault: true),
-  ];
+  List<ExpenseCategory> _categories = [];
 
   // List of tags
-  final List<Tag> _tags = [
-    Tag(id: '1', name: 'Breakfast'),
-    Tag(id: '2', name: 'Lunch'),
-    Tag(id: '3', name: 'Dinner'),
-    Tag(id: '4', name: 'Treat'),
-    Tag(id: '5', name: 'Cafe'),
-    Tag(id: '6', name: 'Restaurant'),
-    Tag(id: '7', name: 'Train'),
-    Tag(id: '8', name: 'Vacation'),
-    Tag(id: '9', name: 'Birthday'),
-    Tag(id: '10', name: 'Diet'),
-    Tag(id: '11', name: 'MovieNight'),
-    Tag(id: '12', name: 'Tech'),
-    Tag(id: '13', name: 'CarStuff'),
-    Tag(id: '14', name: 'SelfCare'),
-    Tag(id: '15', name: 'Streaming'),
-  ];
+  List<Tag> _tags = [];
 
   // Getters
   List<Expense> get expenses => _expenses;
@@ -45,6 +23,58 @@ class ExpenseProvider with ChangeNotifier {
 
   ExpenseProvider(this.storage) {
     _loadExpensesFromStorage();
+    _loadCategoriesFromStorage();
+    _loadTagsFromStorage();
+  }
+
+  void _loadCategoriesFromStorage() {
+    var storedCategories = storage.getItem('categories');
+    if (storedCategories != null) {
+      final List<dynamic> decoded = jsonDecode(storedCategories);
+      _categories = decoded.map((item) => ExpenseCategory.fromJson(Map<String, dynamic>.from(item))).toList();
+    } else {
+      _categories = [
+        ExpenseCategory(id: '1', name: 'Food', isDefault: true),
+        ExpenseCategory(id: '2', name: 'Transport', isDefault: true),
+        ExpenseCategory(id: '3', name: 'Entertainment', isDefault: true),
+        ExpenseCategory(id: '4', name: 'Office', isDefault: true),
+        ExpenseCategory(id: '5', name: 'Gym', isDefault: true),
+      ];
+    }
+  }
+
+  void _saveCategoriesToStorage() {
+    storage.setItem('categories', jsonEncode(_categories.map((e) => e.toJson()).toList()));
+  }
+
+  void _loadTagsFromStorage() {
+    var storedTags = storage.getItem('tags');
+    if (storedTags != null) {
+      final List<dynamic> decoded = jsonDecode(storedTags);
+      _tags = decoded.map((item) => Tag.fromJson(Map<String, dynamic>.from(item))).toList();
+    } else {
+      _tags = [
+        Tag(id: '1', name: 'Breakfast'),
+        Tag(id: '2', name: 'Lunch'),
+        Tag(id: '3', name: 'Dinner'),
+        Tag(id: '4', name: 'Treat'),
+        Tag(id: '5', name: 'Cafe'),
+        Tag(id: '6', name: 'Restaurant'),
+        Tag(id: '7', name: 'Train'),
+        Tag(id: '8', name: 'Vacation'),
+        Tag(id: '9', name: 'Birthday'),
+        Tag(id: '10', name: 'Diet'),
+        Tag(id: '11', name: 'MovieNight'),
+        Tag(id: '12', name: 'Tech'),
+        Tag(id: '13', name: 'CarStuff'),
+        Tag(id: '14', name: 'SelfCare'),
+        Tag(id: '15', name: 'Streaming'),
+      ];
+    }
+  }
+
+  void _saveTagsToStorage() {
+    storage.setItem('tags', jsonEncode(_tags.map((e) => e.toJson()).toList()));
   }
 
   void _loadExpensesFromStorage() {
@@ -96,6 +126,7 @@ class ExpenseProvider with ChangeNotifier {
   void addCategory(ExpenseCategory category) {
     if (!_categories.any((cat) => cat.name == category.name)) {
       _categories.add(category);
+      _saveCategoriesToStorage();
       notifyListeners();
     }
   }
@@ -103,6 +134,7 @@ class ExpenseProvider with ChangeNotifier {
   // Delete a category
   void deleteCategory(String id) {
     _categories.removeWhere((category) => category.id == id);
+    _saveCategoriesToStorage();
     notifyListeners();
   }
 
@@ -110,6 +142,7 @@ class ExpenseProvider with ChangeNotifier {
   void addTag(Tag tag) {
     if (!_tags.any((t) => t.name == tag.name)) {
       _tags.add(tag);
+      _saveTagsToStorage();
       notifyListeners();
     }
   }
@@ -117,6 +150,7 @@ class ExpenseProvider with ChangeNotifier {
   // Delete a tag
   void deleteTag(String id) {
     _tags.removeWhere((tag) => tag.id == id);
+    _saveTagsToStorage();
     notifyListeners();
   }
 

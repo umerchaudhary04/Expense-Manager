@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen>
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
-                    categoryName + " - Total: \$" + total.toStringAsFixed(2),
+                    categoryName + " - Total: PKR " + total.toStringAsFixed(2),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -217,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       title: Text(
                         expense.payee +
-                            " - \$" +
+                            " - PKR " +
                             expense.amount.toStringAsFixed(2),
                       ),
                       subtitle: Text(

@@ -96,9 +96,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // Helper methods for building the form elements go here (omitted for brevity)
 
   void _saveExpense() {
-    if (_amountController.text.isEmpty) {
+    if (_amountController.text.isEmpty || _selectedCategoryId == null || _selectedTagId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all required fields!')),
+        SnackBar(content: Text('Please fill in all required fields, including Category and Tag!')),
       );
       return;
     }
@@ -166,7 +166,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // Helper method to build the category dropdown
   Widget buildCategoryDropdown(ExpenseProvider provider) {
     return DropdownButtonFormField<String>(
-      value: _selectedCategoryId,
+      initialValue: _selectedCategoryId,
       onChanged: (newValue) {
         if (newValue == 'New') {
           showDialog(
@@ -206,7 +206,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // Helper method to build the tag dropdown
   Widget buildTagDropdown(ExpenseProvider provider) {
     return DropdownButtonFormField<String>(
-      value: _selectedTagId,
+      initialValue: _selectedTagId,
       onChanged: (newValue) {
         if (newValue == 'New') {
           showDialog(

@@ -26,7 +26,33 @@ class CategoryManagementScreen extends StatelessWidget {
                 trailing: IconButton(
                   icon: Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
-                    provider.deleteCategory(category.id);
+                    bool isUsed = provider.expenses.any((e) => e.categoryId == category.id);
+                    if (isUsed) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Cannot delete category: It is used in existing expenses.')),
+                      );
+                      return;
+                    }
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text('Delete Category'),
+                        content: Text('Are you sure you want to delete this category?'),
+                        actions: [
+                          TextButton(
+                            child: Text('Cancel'),
+                            onPressed: () => Navigator.of(ctx).pop(),
+                          ),
+                          TextButton(
+                            child: Text('Delete'),
+                            onPressed: () {
+                              provider.deleteCategory(category.id);
+                              Navigator.of(ctx).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               );
@@ -44,7 +70,6 @@ class CategoryManagementScreen extends StatelessWidget {
                   context,
                   listen: false,
                 ).addCategory(newCategory);
-                Navigator.pop(context); // Close the dialog
               },
             ),
           );

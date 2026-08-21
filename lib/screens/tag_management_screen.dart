@@ -24,8 +24,33 @@ class TagManagementScreen extends StatelessWidget {
                 trailing: IconButton(
                   icon: Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
-                    // Delete the tag
-                    provider.deleteTag(tag.id);
+                    bool isUsed = provider.expenses.any((e) => e.tag == tag.id);
+                    if (isUsed) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Cannot delete tag: It is used in existing expenses.')),
+                      );
+                      return;
+                    }
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text('Delete Tag'),
+                        content: Text('Are you sure you want to delete this tag?'),
+                        actions: [
+                          TextButton(
+                            child: Text('Cancel'),
+                            onPressed: () => Navigator.of(ctx).pop(),
+                          ),
+                          TextButton(
+                            child: Text('Delete'),
+                            onPressed: () {
+                              provider.deleteTag(tag.id);
+                              Navigator.of(ctx).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               );
@@ -43,9 +68,6 @@ class TagManagementScreen extends StatelessWidget {
                   context,
                   listen: false,
                 ).addTag(newTag);
-                Navigator.pop(
-                  context,
-                ); // Close the dialog after adding the new tag
               },
             ),
           );
