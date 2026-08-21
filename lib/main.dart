@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'providers/expense_provider.dart';
 import 'screens/category_management_screen.dart';
@@ -9,6 +11,7 @@ import 'screens/tag_management_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await initLocalStorage();
 
   runApp(MyApp(localStorage: localStorage));
@@ -21,6 +24,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ExpenseProvider(localStorage)),
@@ -29,6 +34,9 @@ class MyApp extends StatelessWidget {
         title: 'Expense',
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: analytics),
+        ],
         routes: {
           '/': (context) => HomeScreen(), // Main entry point, HomeScreen
           '/manage_categories': (context) =>

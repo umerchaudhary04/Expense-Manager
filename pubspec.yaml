@@ -38,6 +38,8 @@ dependencies:
   provider: ^6.1.5+1
   collection: ^1.19.1
   localstorage: ^6.0.0
+  firebase_core: ^4.13.0
+  firebase_analytics: ^12.4.6
 
 dev_dependencies:
   flutter_test:
